@@ -1,21 +1,12 @@
-import { useEffect, useRef } from "react"
-
+import axios from "axios";
 
 const App = () => {
-  const ref = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (ref.current) ref.current.focus()
-  })
+  const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    document.title = "my app"
-  })
-
-  // Side Effect
   return (
     <div>
-      <input ref={ref} type="text" className="form-control" />
+
     </div>
   )
 }
