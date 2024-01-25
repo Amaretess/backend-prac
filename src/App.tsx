@@ -10,11 +10,13 @@ const App = () => {
 
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState('')
-
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // ----> ABORTS ASYNCHRONOUS REQUESTS <-----
     const controller = new AbortController();
+
+    setIsLoading(true)
 
     axios
       .get<User[]>("https://jsonplaceholder.typicode.com/users", { signal: controller.signal })
@@ -23,7 +25,7 @@ const App = () => {
         if (err instanceof CanceledError) return;
         setError(err.message)
       })
-
+    setIsLoading(false);
 
     return () => controller.abort();
 
