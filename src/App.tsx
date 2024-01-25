@@ -11,6 +11,7 @@ const App = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState('')
 
+
   useEffect(() => {
     // ----> ABORTS ASYNCHRONOUS REQUESTS <-----
     const controller = new AbortController();
