@@ -20,12 +20,14 @@ const App = () => {
 
     axios
       .get<User[]>("https://jsonplaceholder.typicode.com/users", { signal: controller.signal })
-      .then((res => setUsers(res.data)))
+      .then((res) => {
+        setUsers(res.data)
+      })
       .catch((err) => {
         if (err instanceof CanceledError) return;
         setError(err.message)
       })
-    setIsLoading(false);
+
 
     return () => controller.abort();
 
