@@ -33,21 +33,16 @@ const App = () => {
 
     return () => controller.abort();
 
-    // -------> TRY CATCH <-------
-    // const getUsers = async () => {
-    //   try {
-    //     const res = await axios
-    //       .get<User[]>("https://jsonplaceholder.typicode.com/users");
-    //     setUsers(res.data);
-    //   } catch (err) {
-    //     setError((err as AxiosError).message)
-    //   }
-    // }
-    // getUsers()
   }, [])
 
-  const deleteUser = (user: User) = {
 
+  const deleteUser = (user: User) => {
+    setUsers(users.filter(u => u.id !== user.id))
+
+    axios.delete(`https://jsonplaceholder.typicode.com/users/${user.id}`)
+      .catch(err => {
+
+      })
   }
 
   return (
