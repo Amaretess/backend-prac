@@ -12,6 +12,8 @@ const App = () => {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false);
 
+  const url = "https://jsonplaceholder.typicode.com/users";
+
   useEffect(() => {
     // ----> ABORTS ASYNCHRONOUS REQUESTS <-----
     const controller = new AbortController();
@@ -19,7 +21,7 @@ const App = () => {
     setIsLoading(true)
 
     axios
-      .get<User[]>("https://jsonplaceholder.typicode.com/users", { signal: controller.signal })
+      .get<User[]>(url, { signal: controller.signal })
       .then((res) => {
         setUsers(res.data);
         setIsLoading(false);
@@ -41,7 +43,7 @@ const App = () => {
 
     setUsers(users.filter(u => u.id !== user.id))
 
-    axios.delete(`https://jsonplaceholder.typicode.com/users/${user.id}`)
+    axios.delete(`url/${user.id}`)
       .catch(err => {
         setError(err.message);
         setUsers(originalUsers)
@@ -52,6 +54,8 @@ const App = () => {
     const newUser = { id: 0, name: 'Mosh' };
     setUsers([newUser, ...users]);
 
+    axios.post(url, newUser)
+      .then(({ data: userData }) => setUsers([userData, ...users]))
   }
 
   return (
