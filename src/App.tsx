@@ -46,13 +46,17 @@ const App = () => {
     // getUsers()
   }, [])
 
+  const deleteUser = (user: User) = {
+
+  }
+
   return (
     <>
       {error && <p className="text-danger">{error}</p>}
       {isLoading && <div className="spinner-border"></div>}
       <ul>
         {users.map(user => <li className="list-group-item d-flex justify-content-between" key={user.id}>{user.name}
-          <button className="btn btn-outline-danger" >Delete</button>
+          <button className="btn btn-outline-danger" onClick={() => deleteUser(user)}>Delete</button>
         </li>)}
       </ul>
     </>
