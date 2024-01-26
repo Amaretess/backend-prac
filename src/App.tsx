@@ -51,7 +51,9 @@ const App = () => {
       {error && <p className="text-danger">{error}</p>}
       {isLoading && <div className="spinner-border"></div>}
       <ul>
-        {users.map(user => <li key={user.id}>{user.name}</li>)}
+        {users.map(user => <li key={user.id}>{user.name}
+          <button className="btn btn-outline-danger" ></button>
+        </li>)}
       </ul>
     </>
   )
