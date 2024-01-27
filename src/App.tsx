@@ -12,7 +12,7 @@ const App = () => {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false);
 
-  const url = "https://jsonplaceholder.typicode.com/users";
+  const url = "https://jsonplaceholder.typicode.com/users/";
 
   useEffect(() => {
     // ----> ABORTS ASYNCHRONOUS REQUESTS <-----
@@ -63,6 +63,16 @@ const App = () => {
       })
   }
 
+  const updateUser = (user: User) => {
+    const updatedUser = { ...user, name: user.name + '!' };
+    setUsers(users.map(u => u.id === user.id ? updatedUser : u));
+
+    axios.patch(url + user.id, updatedUser)
+      .catch(err => {
+        setError(err.message);
+      })
+  }
+
   return (
     <>
       {error && <p className="text-danger">{error}</p>}
@@ -70,7 +80,11 @@ const App = () => {
       <button className="btn btn-primary mb-3" onClick={() => addUser()}>Add</button>
       <ul>
         {users.map(user => <li className="list-group-item d-flex justify-content-between" key={user.id}>{user.name}
-          <button className="btn btn-outline-danger" onClick={() => deleteUser(user)}>Delete</button>
+          <div>
+            <button className="btn btn-outline-secondary" onClick={() => updateUser(user)}>update</button>
+            <button className="btn btn-outline-danger mx-1" onClick={() => deleteUser(user)}>Delete</button>
+          </div>
+
         </li>)}
       </ul>
     </>
