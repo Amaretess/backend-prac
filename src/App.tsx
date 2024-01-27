@@ -42,7 +42,7 @@ const App = () => {
     setUsers(users.filter(u => u.id !== user.id))
 
     apiClient
-      .delete(`users/${user.id}`)
+      .delete(`/users/${user.id}`)
       .catch(err => {
         setError(err.message);
         setUsers(originalUsers)
@@ -67,7 +67,7 @@ const App = () => {
     const updatedUser = { ...user, name: user.name + '!' };
     setUsers(users.map(u => u.id === user.id ? updatedUser : u));
 
-    apiClient.patch('/users' + user.id, updatedUser)
+    apiClient.patch('/users/' + user.id, updatedUser)
       .catch(err => {
         setError(err.message);
         setUsers(originalUsers)
