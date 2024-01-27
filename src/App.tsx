@@ -1,6 +1,5 @@
-import { CanceledError } from "axios";
 import { useEffect, useState } from "react";
-import apiClient from "./services/api-client";
+import apiClient, { CanceledError } from "./services/api-client";
 
 interface User {
   id: number;
@@ -13,16 +12,14 @@ const App = () => {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false);
 
-  const url = "https://jsonplaceholder.typicode.com/users/";
-
   useEffect(() => {
     // ----> ABORTS ASYNCHRONOUS REQUESTS <-----
     const controller = new AbortController();
 
     setIsLoading(true)
 
-    axios
-      .get<User[]>(url, { signal: controller.signal })
+    apiClient
+      .get<User[]>('/users', { signal: controller.signal })
       .then((res) => {
         setUsers(res.data);
         setIsLoading(false);
@@ -44,7 +41,8 @@ const App = () => {
 
     setUsers(users.filter(u => u.id !== user.id))
 
-    axios.delete(`url/${user.id}`)
+    apiClient
+      .delete(`users/${user.id}`)
       .catch(err => {
         setError(err.message);
         setUsers(originalUsers)
@@ -56,7 +54,7 @@ const App = () => {
     const newUser = { id: 0, name: 'Mosh' };
     setUsers([newUser, ...users]);
 
-    axios.post(url, newUser)
+    apiClient.post('/users', newUser)
       .then(({ data: userData }) => setUsers([userData, ...users]))
       .catch(err => {
         setError(err.message);
@@ -69,7 +67,7 @@ const App = () => {
     const updatedUser = { ...user, name: user.name + '!' };
     setUsers(users.map(u => u.id === user.id ? updatedUser : u));
 
-    axios.patch(url + user.id, updatedUser)
+    apiClient.patch('/users' + user.id, updatedUser)
       .catch(err => {
         setError(err.message);
         setUsers(originalUsers)
