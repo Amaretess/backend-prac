@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import apiClient, { CanceledError } from "./services/api-client";
-
-interface User {
-  id: number;
-  name: string;
-}
+import userService, { User } from "./services/user-service";
 
 const App = () => {
 
@@ -14,12 +10,10 @@ const App = () => {
 
   useEffect(() => {
     // ----> ABORTS ASYNCHRONOUS REQUESTS <-----
-    const controller = new AbortController();
-
     setIsLoading(true)
 
-    apiClient
-      .get<User[]>('/users', { signal: controller.signal })
+    userService
+      .getAllUsers()
       .then((res) => {
         setUsers(res.data);
         setIsLoading(false);
