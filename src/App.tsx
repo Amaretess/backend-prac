@@ -12,12 +12,11 @@ const App = () => {
     // ----> ABORTS ASYNCHRONOUS REQUESTS <-----
     setIsLoading(true)
 
-    userService
-      .getAllUsers()
-      .then((res) => {
-        setUsers(res.data);
-        setIsLoading(false);
-      })
+    const { request, cancel } = userService.getAllUsers()
+    request.then((res) => {
+      setUsers(res.data);
+      setIsLoading(false);
+    })
       .catch((err) => {
         if (err instanceof CanceledError) return;
         setError(err.message);
@@ -25,7 +24,7 @@ const App = () => {
       })
 
 
-    return () => controller.abort();
+    return () => cancel;
 
   }, [])
 
