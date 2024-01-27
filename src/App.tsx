@@ -64,12 +64,14 @@ const App = () => {
   }
 
   const updateUser = (user: User) => {
+    const originalUsers = [...users];
     const updatedUser = { ...user, name: user.name + '!' };
     setUsers(users.map(u => u.id === user.id ? updatedUser : u));
 
     axios.patch(url + user.id, updatedUser)
       .catch(err => {
         setError(err.message);
+        setUsers(originalUsers)
       })
   }
 
