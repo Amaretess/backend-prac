@@ -1,5 +1,6 @@
-import axios, { CanceledError } from "axios";
+import { CanceledError } from "axios";
 import { useEffect, useState } from "react";
+import apiClient from "./services/api-client";
 
 interface User {
   id: number;
