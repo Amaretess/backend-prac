@@ -1,85 +1,62 @@
-import { useEffect, useState } from "react";
-import apiClient, { CanceledError } from "./services/api-client";
+import { useEffect, useState } from "react"
 import userService, { User } from "./services/user-service";
+import { CanceledError } from "./services/api-client";
+
 
 const App = () => {
 
   const [users, setUsers] = useState<User[]>([]);
-  const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    // ----> ABORTS ASYNCHRONOUS REQUESTS <-----
-    setIsLoading(true)
-
-    const { request, cancel } = userService.getAllUsers()
-    request.then((res) => {
-      setUsers(res.data);
-      setIsLoading(false);
+    setLoading(true);
+    const { request, cancel } = userService.getAll<User>()
+    request.then(({ data: allUsers }) => {
+      setUsers(allUsers)
+      setLoading(false);
+    }).catch((err) => {
+      if (err instanceof CanceledError) return;
+      setError(err.message);
+      setLoading(false);
     })
-      .catch((err) => {
-        if (err instanceof CanceledError) return;
-        setError(err.message);
-        setIsLoading(false);
-      })
-
-
-    return () => cancel;
+    return () => cancel();
 
   }, [])
 
-
-  const deleteUser = (user: User) => {
-    const originalUsers = [...users]
-
-    setUsers(users.filter(u => u.id !== user.id))
-
-    apiClient
-      .delete(`/users/${user.id}`)
-      .catch(err => {
-        setError(err.message);
-        setUsers(originalUsers)
-      })
-  }
-
-  const addUser = () => {
-    const originalUsers = [...users];
-    const newUser = { id: 0, name: 'Mosh' };
-    setUsers([newUser, ...users]);
-
-    apiClient.post('/users', newUser)
-      .then(({ data: userData }) => setUsers([userData, ...users]))
-      .catch(err => {
-        setError(err.message);
-        setUsers(originalUsers)
-      })
-  }
-
   const updateUser = (user: User) => {
-    const originalUsers = [...users];
-    const updatedUser = { ...user, name: user.name + '!' };
-    setUsers(users.map(u => u.id === user.id ? updatedUser : u));
+    const originalUsers = [...users]
+    const updatedUser = { ...user, name: 'you selected: ' + user.name }
+    setUsers(users.map(u => u.id === user.id ? updatedUser : u))
 
-    apiClient.patch('/users/' + user.id, updatedUser)
-      .catch(err => {
-        setError(err.message);
-        setUsers(originalUsers)
-      })
+    userService.update(updatedUser).catch((err) => {
+      setError(err.message);
+      setUsers(originalUsers);
+    })
+
+  }
+  const deleteUser = (id: number) => {
+    setUsers(users.filter(u => u.id !== id))
+
+    userService.delete(id);
   }
 
   return (
     <>
       {error && <p className="text-danger">{error}</p>}
-      {isLoading && <div className="spinner-border"></div>}
-      <button className="btn btn-primary mb-3" onClick={() => addUser()}>Add</button>
-      <ul>
-        {users.map(user => <li className="list-group-item d-flex justify-content-between" key={user.id}>{user.name}
-          <div>
-            <button className="btn btn-outline-secondary" onClick={() => updateUser(user)}>update</button>
-            <button className="btn btn-outline-danger mx-1" onClick={() => deleteUser(user)}>Delete</button>
-          </div>
+      {isLoading && <p className="spinner-border"></p>}
+      <ul className="list-group" >
+        {users.map((user) => (
+          <li className="list-group-item d-flex justify-content-between" key={user.id}>
+            {user.name}
+            <div>
+              <button className="btn btn-outline-secondary" onClick={() => updateUser(user)}>Update</button>
+              <button className="btn btn-outline-danger" onClick={() => deleteUser(user.id)} >Delete</button>
+            </div>
+          </li>
 
-        </li>)}
+        ))}
+
       </ul>
     </>
   )
